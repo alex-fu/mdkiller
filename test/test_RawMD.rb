@@ -4,7 +4,7 @@ $:.unshift File.expand_path('../../lib', File.symlink?(__FILE__) ? File.readlink
 
 require 'raw_md'
 
-rawmd = RawMD.new('/home/liuhj/Downloads/sz000669_20141017.xls', '20141017')
+rawmd = RawMD.new('./sz000669_20141017.xls', '20141017')
 
 md_arr = rawmd.getall
 
