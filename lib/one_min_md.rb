@@ -14,11 +14,13 @@ class OneMinMD
     pm_start_time = Time.parse(@md_date+'T13:00:00')
     pm_stop_time = Time.parse(@md_date+'T15:01:00')
 
-    puts am_start_time, am_stop_time, pm_start_time, pm_stop_time
+    # puts am_start_time, am_stop_time, pm_start_time, pm_stop_time
 
     @onemin_md_hash = {}  # contains a bunch of time => [open_price, close_price, high_price, low_price, avg_price, volume, amount]
 
-    last_price = 0.0 # FIXME: we should to set it to JHJJ price on 09:25:00 or yesterday's last price
+    last_price = get_jhjj_price(raw_md_arr) # we should to set it to JHJJ price on 09:25:00 or yesterday's last price
+    puts "JHJJ price: #{last_price}"
+
     ### calculate all k-line in AM
     curr_min = am_start_time
     while(curr_min < am_stop_time) do
@@ -64,6 +66,18 @@ class OneMinMD
   def get_last_price(raw_md_inrange_arr)
     temp_arr = raw_md_inrange_arr.sort_by { |elem| elem[:time]}
     temp_arr[-1][:price]
+  end
+
+  def get_jhjj_price(raw_md_arr)
+    jhjj_start_time = Time.parse(@md_date+'T09:25:00')
+    jhjj_end_time = Time.parse(@md_date+'T09:26:00')
+
+    raw_md_inrange_arr = find_raw_md_inrange(raw_md_arr, jhjj_start_time, jhjj_end_time)
+    if raw_md_inrange_arr.empty?
+      0.0
+    else
+      get_last_price(raw_md_inrange_arr)
+    end
   end
 
   def get_kline_data(raw_md_inrange_arr)
